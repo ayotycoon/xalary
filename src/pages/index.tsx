@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import type { HeadFC, PageProps } from "gatsby"
 
 import Layout from "../misc/Layout";
@@ -7,7 +7,7 @@ import StateTax from "../sections/StateTax";
 import { Grid } from "@mui/material";
 import DataInput from "../sections/DataInput";
 import Analysis from "../sections/Analysis";
-import {useStateWIthStorage, StorageConstants} from "../misc/Storage";
+import {useStateWIthStorage, StorageConstants, processFromUrl} from "../misc/Storage";
 import { DeductableTemplate, OBJECTS } from "../misc/Constants";
 import DeductablesView from "../sections/DeductablesView";
 
@@ -21,6 +21,9 @@ const IndexPage: React.FC<PageProps> = () => {
   const [postTaxDeductables, setPostTaxDeductables] = useStateWIthStorage(StorageConstants.PostTaxDeductables, [{ ...OBJECTS.deductableTemplate }] as DeductableTemplate[])
   const [preTaxeDeductables, setPreTaxDeductables] = useStateWIthStorage(StorageConstants.PreTaxDeductables, [{ ...OBJECTS.deductableTemplate }] as DeductableTemplate[])
 
+  useEffect(()=>{
+    processFromUrl()
+  }, [])
 
   return (
     <Layout>

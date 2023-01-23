@@ -1,12 +1,14 @@
-import { ListSubheader, List, Divider, Button } from '@mui/material';
+import { ListSubheader, List, Divider, Button, Tooltip, IconButton, TextField } from '@mui/material';
 import SidebarMenuItem from './item';
 import menuItems, { MenuItem } from './items';
 import { styled } from '@mui/material/styles';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useLocation } from '@reach/router';
 import { Link } from 'gatsby';
 import { StateContext } from '../../../../contexts/StateContext';
 import { Box } from '@mui/system';
+import { Share } from '@mui/icons-material';
+import { getDataAsString } from '../../../Storage';
 
 const MenuWrapper = styled(List)(
   ({ theme }) => `
@@ -130,17 +132,15 @@ const SubMenuWrapper = styled(List)(
 
 const renderSidebarMenuItems = ({
   items,
-  path,
-  authUser
+  path
 }: {
   items: any[]; // MenuItem[];
   path: string;
-  authUser: User
 }): JSX.Element => {
   items = items.filter(item => !item.hide)
   return (
     <SubMenuWrapper>
-      {items.reduce((ev, item) => reduceChildRoutes({ ev, item, path,authUser }), [])}
+      {items.reduce((ev, item) => reduceChildRoutes({ ev, item, path }), [])}
     </SubMenuWrapper>
   )
 };
@@ -148,17 +148,15 @@ const renderSidebarMenuItems = ({
 const reduceChildRoutes = ({
   ev,
   path,
-  item,
-  authUser
+  item
 }: {
   ev: JSX.Element[];
   path: string;
   item: MenuItem;
-  authUser: User
 }): Array<JSX.Element> => {
   const key = item.name;
   const exactMatch = window.location.pathname == (item.link || '')
-if(item.authenticated && !authUser) return ev;
+
   if (item.items) {
     const partialMatch = false;
 
@@ -174,8 +172,7 @@ if(item.authenticated && !authUser) return ev;
       >
         {renderSidebarMenuItems({
           path,
-          items: item.items,
-          authUser
+          items: item.items
         })}
       </SidebarMenuItem>
     );
@@ -198,8 +195,8 @@ if(item.authenticated && !authUser) return ev;
 function SidebarMenu() {
   const location = useLocation();
   const sectionItems = menuItems.filter(section => !section.hide);
+  const [shareUrl, setShareUrl] = useState("");
 
-  const { authUser } = useContext(StateContext);
 
   return (
 
@@ -214,10 +211,36 @@ function SidebarMenu() {
           >
             {renderSidebarMenuItems({
               items: section.items,
-              path: location.pathname,
-              authUser: authUser
+              path: location.pathname
             })}
           </MenuWrapper>
+
+          <Box style={{ textAlign: 'center' }} p={3}>
+
+
+            <TextField
+              required
+              label="Copy link to share"
+              value={shareUrl}
+              variant="standard"
+              style={{ width: '100%' }}
+              placeholder="John Doe"
+
+            />
+            <br />
+            <Tooltip arrow title="Share data">
+              <IconButton color="primary" onClick={() => {
+
+                const str = getDataAsString()
+
+                const url = window.location.href + `?share=${str}`;
+                setShareUrl(url)
+
+              }}>
+                <Share />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </div>
       ))}
 

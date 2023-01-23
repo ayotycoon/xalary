@@ -52,6 +52,7 @@ function Header({ title }: any) {
               </IconButton>
             </Tooltip>
           </Hidden>
+
         </Box>
       </HeaderWrapper >
     </Hidden>
