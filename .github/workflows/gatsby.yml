@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+env:
+  NPM_CONFIG_LEGACY_PEER_DEPS: true
 
 jobs:
   build:
