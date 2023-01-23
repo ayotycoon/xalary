@@ -39,20 +39,15 @@ export const getDataAsString = () => {
 
 }
 
-export const processFromUrl = () => {
+export const processFromUrl = (url:string) => {
 
-    if(!isBrowser()) return;
-    if(!window.confirm("do you want to load from url ?")) return;
-    const x = window.location.search;
-    if (!x || x == "?") return;
-    const params = new URLSearchParams(`share={"state":"Arkansas","annual-salary":"145000","after-tax-deductables":[{"name":"401k","value":"0","_name":"401k","_value":"0","editing":false}],"before-tax-deductables":[{"name":"401k","value":"6","_name":"401k","_value":"6","editing":false,"_match":"1.25","match":"1.25"}]}`)
-    const search = params.get("share");
-    if (!search) return;
-    const data = JSON.parse(search)
+
+    const data = JSON.parse(url)
     
     Object.values(StorageConstants).forEach(str => {
        localStorage.setItem(str, JSON.stringify(data[str])) 
     });
+
+   window.location.href = (window.location.host + window.location.pathname)
    
-   // window.location.replace("")
 }
