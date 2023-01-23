@@ -12,12 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: 18.x
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v3
+        with: 
+          node-version: 18
       - uses: enriikke/gatsby-gh-pages-action@v2
         with:
           access-token: ${{ secrets.ACCESS_TOKEN }}
-          node-version: ${{ matrix.node-version }}
           deploy-branch: gh-pages
