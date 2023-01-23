@@ -1,6 +1,7 @@
 import type { GatsbyConfig } from "gatsby";
 
 const config: GatsbyConfig = {
+  pathPrefix: `/xalary`,
   siteMetadata: {
     title: `traka`,
     siteUrl: `https://www.yourdomain.tld`
