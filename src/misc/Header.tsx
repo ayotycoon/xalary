@@ -40,7 +40,7 @@ function Header({ title }: any) {
             <Logo />
           </Hidden>
 
-          <h1> {title || "Websites"}</h1>
+          <h1> {title || "Xalary"}</h1>
 
         </Box>
         <Box display="flex" alignItems="center">
