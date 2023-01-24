@@ -7,8 +7,8 @@ import { useLocation } from '@reach/router';
 import { Link } from 'gatsby';
 import { StateContext } from '../../../../contexts/StateContext';
 import { Box } from '@mui/system';
-import { Share } from '@mui/icons-material';
-import { getDataAsString } from '../../../Storage';
+import { Share, Upload } from '@mui/icons-material';
+import { getDataAsString, processFromUrl } from '../../../Storage';
 
 const MenuWrapper = styled(List)(
   ({ theme }) => `
@@ -195,7 +195,7 @@ const reduceChildRoutes = ({
 function SidebarMenu() {
   const location = useLocation();
   const sectionItems = menuItems.filter(section => !section.hide);
-  const [shareUrl, setShareUrl] = useState("");
+  const [shareUrl, setShareableString] = useState("");
 
 
   return (
@@ -225,21 +225,35 @@ function SidebarMenu() {
               variant="standard"
               style={{ width: '100%' }}
               placeholder="John Doe"
+              onChange={(e) => setShareableString(e.target.value)}
 
             />
             <br />
+            <Box>
             <Tooltip arrow title="Share data">
               <IconButton color="primary" onClick={() => {
 
                 const str = getDataAsString()
 
-                const url = window.location.href + `?share=${str}`;
-                setShareUrl(url)
+                setShareableString(str)
 
               }}>
                 <Share />
               </IconButton>
             </Tooltip>
+            <Tooltip arrow title="Share data">
+              <IconButton color="primary" onClick={() => {
+
+                processFromUrl(shareUrl)
+
+                window.location.reload()
+
+              }}>
+                <Upload />
+              </IconButton>
+            </Tooltip>
+
+            </Box>
           </Box>
         </div>
       ))}

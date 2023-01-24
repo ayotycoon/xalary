@@ -39,15 +39,20 @@ export const getDataAsString = () => {
 
 }
 
-export const processFromUrl = (url:string) => {
+export const processFromUrl = (str: string) => {
+    if (!isBrowser() || !str) return
+
+    try {
 
 
-    const data = JSON.parse(url)
-    
-    Object.values(StorageConstants).forEach(str => {
-       localStorage.setItem(str, JSON.stringify(data[str])) 
-    });
+        const data = JSON.parse(str)
 
-   window.location.href = (window.location.host + window.location.pathname)
-   
+        Object.values(StorageConstants).forEach(s => {
+            localStorage.setItem(s, JSON.stringify(data[s]))
+        });
+        window.location.reload()
+    } catch (e) {
+        alert("invalid string")
+    }
+
 }
