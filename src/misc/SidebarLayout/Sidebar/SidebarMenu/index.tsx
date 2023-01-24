@@ -9,6 +9,7 @@ import { StateContext } from '../../../../contexts/StateContext';
 import { Box } from '@mui/system';
 import { Share, Upload } from '@mui/icons-material';
 import { getDataAsString, processFromUrl } from '../../../Storage';
+import StorageView from '../../../StorageView';
 
 const MenuWrapper = styled(List)(
   ({ theme }) => `
@@ -216,8 +217,6 @@ function SidebarMenu() {
           </MenuWrapper>
 
           <Box style={{ textAlign: 'center' }} p={3}>
-
-
             <TextField
               required
               label="Copy link to share"
@@ -255,6 +254,8 @@ function SidebarMenu() {
 
             </Box>
           </Box>
+
+          <StorageView />
         </div>
       ))}
 
