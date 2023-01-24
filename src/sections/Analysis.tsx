@@ -6,6 +6,7 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import CardLayout from "./CardLayout";
 import { DeductableTemplate, getTotalDeductablePercent, NUMBERS, OBJECTS } from "../misc/Constants";
+import AnalysisChart from "./AnalysisChart";
 const WeeksInYear = 52;
 
 interface AnalysisProps {
@@ -61,6 +62,7 @@ function Analysis({ annualSalary, federalTaxAmount, postTaxDeductables, preTaxeD
 
 
     return (<CardLayout header="Analysis" avatar="A">
+            
         {renderable.map((cell, index) => <Box key={index}>
             {index != 0 && <Divider sx={{ my: 1 }} />}
             <Grid key={cell.title}
@@ -69,6 +71,9 @@ function Analysis({ annualSalary, federalTaxAmount, postTaxDeductables, preTaxeD
                 alignItems="stretch"
                 spacing={3}
             >
+                <Grid item xs={12}>
+       
+                </Grid>
                 <Grid item xs={12}>
                     <Typography fontWeight="normal" color="text.secondary" >
                         {cell.title}

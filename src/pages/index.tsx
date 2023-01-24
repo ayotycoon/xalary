@@ -10,6 +10,7 @@ import Analysis from "../sections/Analysis";
 import {useStateWIthStorage, StorageConstants, processFromUrl} from "../misc/Storage";
 import { DeductableTemplate, OBJECTS } from "../misc/Constants";
 import DeductablesView from "../sections/DeductablesView";
+import AnalysisChart from "../sections/AnalysisChart";
 
 
 
@@ -21,9 +22,6 @@ const IndexPage: React.FC<PageProps> = () => {
   const [postTaxDeductables, setPostTaxDeductables] = useStateWIthStorage(StorageConstants.PostTaxDeductables, [{ ...OBJECTS.deductableTemplate }] as DeductableTemplate[])
   const [preTaxeDeductables, setPreTaxDeductables] = useStateWIthStorage(StorageConstants.PreTaxDeductables, [{ ...OBJECTS.deductableTemplate }] as DeductableTemplate[])
 
-  useEffect(()=>{
-    processFromUrl()
-  }, [])
 
   return (
     <Layout>
@@ -33,7 +31,6 @@ const IndexPage: React.FC<PageProps> = () => {
         alignItems="stretch"
         spacing={3}
       >
-
         <Grid item xs={12} md={6}>
           <DataInput 
           annualSalary={annualSalary} 
@@ -46,17 +43,20 @@ const IndexPage: React.FC<PageProps> = () => {
           />
         </Grid>
         <Grid item xs={12} md={6}>
+        <AnalysisChart annualSalary={annualSalary} federalTaxAmount={federalTaxAmount} stateTaxAmount={stateTaxAmount} postTaxDeductables={postTaxDeductables} preTaxeDeductables={preTaxeDeductables} />
+        </Grid>
+        <Grid item xs={12} md={6} >
           <Analysis annualSalary={annualSalary} federalTaxAmount={federalTaxAmount} stateTaxAmount={stateTaxAmount} postTaxDeductables={postTaxDeductables} preTaxeDeductables={preTaxeDeductables} />
         </Grid>
         <Grid item xs={12} md={6}>
           <FederalTax annualSalary={annualSalary} federalTaxAmount={federalTaxAmount} setFederalTaxAmount={setFederalTaxAmount} preTaxeDeductables={preTaxeDeductables}/>
-        </Grid>
-        <Grid item xs={12} md={6}>
+<br />
           <StateTax annualSalary={annualSalary} stateTaxAmount={stateTaxAmount} setStateTaxAmount={setStateTaxAmount} preTaxeDeductables={preTaxeDeductables} state={state} setState={setState} />
         </Grid>
         <Grid item xs={12} md={6}>
           <DeductablesView annualSalary={annualSalary} stateTaxAmount={stateTaxAmount} federalTaxAmount={federalTaxAmount} preTaxeDeductables={preTaxeDeductables} postTaxeDeductables={postTaxDeductables} />
         </Grid>
+  
 
 
 

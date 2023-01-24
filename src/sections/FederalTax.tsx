@@ -56,7 +56,7 @@ function FederalTax({ annualSalary, preTaxeDeductables, federalTaxAmount, setFed
                     %
                 </Typography>
                 <Typography variant="h4">
-                    {OBJECTS.percentFormatter.format(annualTaxableIncome ? federalTaxAmount / annualTaxableIncome : 0)}
+                    {OBJECTS.percentFormatter.format(annualSalary ? federalTaxAmount / annualSalary : 0)}
 
                 </Typography>
 

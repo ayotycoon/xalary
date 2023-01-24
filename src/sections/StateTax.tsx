@@ -84,7 +84,7 @@ function StateTax({ annualSalary, preTaxeDeductables, stateTaxAmount, setStateTa
                     %
                 </Typography>
                 <Typography variant="h4">
-                    {OBJECTS.percentFormatter.format(annualTaxableIncome ? stateTaxAmount / annualTaxableIncome : 0)}
+                    {OBJECTS.percentFormatter.format(annualSalary ? stateTaxAmount / annualSalary : 0)}
 
                 </Typography>
 

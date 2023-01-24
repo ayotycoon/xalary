@@ -8,8 +8,8 @@ export const useStateWIthStorage = <T>(key: string, v: T): [T, React.Dispatch<Re
 
 
     const _val = isBrowser() ? window.localStorage.getItem(key) : "";
-    const val = _val ? JSON.parse(_val) : "";
-
+    let val = _val ? JSON.parse(_val) : "";
+if(val && typeof v == 'number') val = parseInt(val)
     const a = val || v;
     const b = (input: T) => {
         isBrowser() ? window.localStorage.setItem(key, JSON.stringify(input)) : ""

@@ -241,12 +241,12 @@ function SidebarMenu() {
                 <Share />
               </IconButton>
             </Tooltip>
-            <Tooltip arrow title="Share data">
+            <Tooltip arrow title="Load data">
               <IconButton color="primary" onClick={() => {
 
                 processFromUrl(shareUrl)
 
-                window.location.reload()
+
 
               }}>
                 <Upload />
