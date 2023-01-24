@@ -25,6 +25,7 @@ export const StorageConstants = {
     AnnualSalary: "annual-salary",
     PostTaxDeductables: "after-tax-deductables",
     PreTaxDeductables: "before-tax-deductables",
+    Expenses: "expenses",
 }
 
 export const getDataAsString = () => {

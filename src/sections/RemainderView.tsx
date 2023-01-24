@@ -5,45 +5,31 @@ import { Box } from "@mui/system";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import CardLayout from "./CardLayout";
-import { DeductableTemplate, getTotalDeductablePercent, NUMBERS, OBJECTS } from "../misc/Constants";
+import { DeductableTemplate, ExpensesTemplate, getRemainderAfterAllSpendings, getTaxDeductableAmount, getTotalDeductablePercent, getTotalExpenses, NUMBERS, OBJECTS } from "../misc/Constants";
 import federalTaxJson from '../config/federalTax.json'
 const WeeksInYear = 52;
 
-interface FederalTaxProps {
+interface RemainderViewProps {
     annualSalary: number
-    preTaxeDeductables: DeductableTemplate[]
+    stateTaxAmount: number
     federalTaxAmount: number
-    setFederalTaxAmount: any
+    preTaxeDeductables: DeductableTemplate[]
+    postTaxDeductables: DeductableTemplate[]
+    expenses: ExpensesTemplate[]
 }
 
-function FederalTax({ annualSalary, preTaxeDeductables, federalTaxAmount, setFederalTaxAmount }: FederalTaxProps) {
-    const [rates, setRates] = useState(getFederalTaxRates())
-    const totalPreTaxDeductablesAmount = ((getTotalDeductablePercent(preTaxeDeductables) / 100) * annualSalary)
-
-    const annualTaxableIncome = annualSalary - totalPreTaxDeductablesAmount;
+function RemainderView({ annualSalary, federalTaxAmount, postTaxDeductables, preTaxeDeductables, stateTaxAmount, expenses }: RemainderViewProps) {
 
 
+    const preTaxDeductableAmount = getTaxDeductableAmount(preTaxeDeductables, annualSalary)
+    const postTaxDeductableAmount = getTaxDeductableAmount(postTaxDeductables, annualSalary)
 
-    useEffect(() => {
+    const totalExpenses = getTotalExpenses(expenses)
 
-        let rem = annualTaxableIncome;
-        let totalTaxed = 0;
-        for (let rate of rates){
-            if(rem == 0) break;
-            
-            let rateDiff = Math.min(rate.end - rate.start, rem)
-            let taxedRateDiff = (rate.tax/100) * rateDiff;
-            totalTaxed+=taxedRateDiff;
-            rem -= rateDiff;
+    const remainder = getRemainderAfterAllSpendings(annualSalary, federalTaxAmount, stateTaxAmount, preTaxDeductableAmount, postTaxDeductableAmount, totalExpenses)
 
 
-        }
-        setFederalTaxAmount(totalTaxed)
-
-    }, [annualSalary, preTaxeDeductables])
-
-
-    return (<CardLayout header="Federal Tax" avatar="FT">
+    return (<CardLayout header="Remainder" avatar="RM">
         <Grid
             container
             direction="row"
@@ -56,7 +42,7 @@ function FederalTax({ annualSalary, preTaxeDeductables, federalTaxAmount, setFed
                     %
                 </Typography>
                 <Typography variant="h4">
-                    {OBJECTS.percentFormatter.format(annualSalary ? federalTaxAmount / annualSalary : 0)}
+                    {OBJECTS.percentFormatter.format(annualSalary ? remainder / annualSalary : 0)}
 
                 </Typography>
 
@@ -66,7 +52,7 @@ function FederalTax({ annualSalary, preTaxeDeductables, federalTaxAmount, setFed
                     Annual
                 </Typography>
                 <Typography variant="h4">
-                    {OBJECTS.currencyFormatter.format(federalTaxAmount)}
+                    {OBJECTS.currencyFormatter.format(remainder)}
                 </Typography>
 
             </Grid>
@@ -76,7 +62,7 @@ function FederalTax({ annualSalary, preTaxeDeductables, federalTaxAmount, setFed
                     Monthly
                 </Typography>
                 <Typography variant="h4">
-                    {OBJECTS.currencyFormatter.format(federalTaxAmount / (NUMBERS.WEEKS_IN_YEAR / 4))}
+                    {OBJECTS.currencyFormatter.format(remainder / (NUMBERS.WEEKS_IN_YEAR / 4))}
                 </Typography>
 
             </Grid>
@@ -86,7 +72,7 @@ function FederalTax({ annualSalary, preTaxeDeductables, federalTaxAmount, setFed
                     Bi-Weekly
                 </Typography>
                 <Typography variant="h4">
-                    {OBJECTS.currencyFormatter.format(federalTaxAmount / (NUMBERS.WEEKS_IN_YEAR / 2))}
+                    {OBJECTS.currencyFormatter.format(remainder / (NUMBERS.WEEKS_IN_YEAR / 2))}
                 </Typography>
 
             </Grid>
@@ -100,10 +86,10 @@ function FederalTax({ annualSalary, preTaxeDeductables, federalTaxAmount, setFed
 }
 
 
-const getFederalTaxRates = () => {
+const getRemainderViewRates = () => {
 
-    return    federalTaxJson
+    return federalTaxJson
 
 }
 
-export default FederalTax;
+export default RemainderView;

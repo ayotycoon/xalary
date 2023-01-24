@@ -5,7 +5,7 @@ import { Box } from "@mui/system";
 import moment from "moment";
 import React, { useEffect, useRef } from "react";
 import { Chart, registerables } from 'chart.js'
-import { DeductableTemplate, getTotalDeductablePercent, OBJECTS } from "../misc/Constants";
+import { DeductableTemplate, ExpensesTemplate, getRemainderAfterAllSpendings, getTaxDeductableAmount, getTotalDeductablePercent, getTotalDeductables, getTotalExpenses, NUMBERS, OBJECTS } from "../misc/Constants";
 Chart.register(...registerables);
 
 interface AnalysisChartProps {
@@ -14,41 +14,53 @@ interface AnalysisChartProps {
     federalTaxAmount: number
     preTaxeDeductables: DeductableTemplate[]
     postTaxDeductables: DeductableTemplate[]
+    expenses: ExpensesTemplate[]
 }
-function getPercent(a:number, b:number){
-    const x = a/b;
+function getPercent(a: number, b: number) {
+    const x = a / b;
     return ` (${OBJECTS.percentFormatter.format(x)})`;
 }
 
-function AnalysisChart({ annualSalary, federalTaxAmount, postTaxDeductables, preTaxeDeductables, stateTaxAmount }: AnalysisChartProps) {
+function AnalysisChart({ annualSalary, federalTaxAmount, postTaxDeductables, preTaxeDeductables, stateTaxAmount, expenses }: AnalysisChartProps) {
     const ref = useRef(null as any)
 
 
-    const preTaxDeductableAmount = ((getTotalDeductablePercent(preTaxeDeductables) / 100) * annualSalary)
-    const postTaxDeductableAmount = ((getTotalDeductablePercent(postTaxDeductables) / 100) * (annualSalary - federalTaxAmount - stateTaxAmount))
+    const preTaxDeductableAmount = getTaxDeductableAmount(preTaxeDeductables, annualSalary)
+    const postTaxDeductableAmount = getTaxDeductableAmount(postTaxDeductables, annualSalary)
+
+    const totalExpenses = getTotalExpenses(expenses)
 
     const data = [
         {
-            name: 'Federal Tax'+getPercent(federalTaxAmount, annualSalary),
+            name: 'Federal Tax' + getPercent(federalTaxAmount, annualSalary),
             value: federalTaxAmount,
             color: "red"
         },
         {
-            name: 'State Tax'+getPercent(stateTaxAmount, annualSalary),
+            name: 'State Tax' + getPercent(stateTaxAmount, annualSalary),
             value: stateTaxAmount,
             color: "pink"
         },
         {
-            name: 'Deductables'+getPercent(preTaxDeductableAmount + postTaxDeductableAmount, annualSalary),
-            value: preTaxDeductableAmount + postTaxDeductableAmount,
+            name: 'Deductables' + getPercent(getTotalDeductables(preTaxDeductableAmount, postTaxDeductableAmount), annualSalary),
+            value: getTotalDeductables(preTaxDeductableAmount, postTaxDeductableAmount),
             color: "orange"
         },
         {
-            name: 'Remaining'+getPercent(annualSalary - (federalTaxAmount + stateTaxAmount + preTaxDeductableAmount + postTaxDeductableAmount), annualSalary),
-            value: annualSalary - (federalTaxAmount + stateTaxAmount + preTaxDeductableAmount + postTaxDeductableAmount),
+            name: 'Savings' + getPercent(getRemainderAfterAllSpendings(annualSalary, federalTaxAmount, stateTaxAmount, preTaxDeductableAmount, postTaxDeductableAmount, totalExpenses), annualSalary),
+            value: getRemainderAfterAllSpendings(annualSalary, federalTaxAmount, stateTaxAmount, preTaxDeductableAmount, postTaxDeductableAmount, totalExpenses),
             color: "green"
         }
     ]
+
+    expenses.forEach((e, i) => {
+
+        data.push({
+            name: e.name + ' ' + getPercent(e.annualTotal, annualSalary),
+            value: e.annualTotal,
+            color: NUMBERS.COLORS[i % NUMBERS.COLORS.length - 1]
+        })
+    })
 
 
 
@@ -73,7 +85,7 @@ function AnalysisChart({ annualSalary, federalTaxAmount, postTaxDeductables, pre
 
 
                 plugins: {
-   
+
 
                     legend: {
                         position: 'top',
@@ -91,13 +103,13 @@ function AnalysisChart({ annualSalary, federalTaxAmount, postTaxDeductables, pre
 
     useEffect(() => {
         if (!ref.current || !chartRef.current) return
-        console.log("yes")
+
         chartRef.current.data.labels = data.map(d => d.name),
-        chartRef.current.data.datasets[0].data = data.map(d => d.value);
+            chartRef.current.data.datasets[0].data = data.map(d => d.value);
         chartRef.current.update()
 
 
-    }, [annualSalary, federalTaxAmount, postTaxDeductables, preTaxeDeductables, stateTaxAmount])
+    }, [annualSalary, federalTaxAmount, postTaxDeductables, preTaxeDeductables, stateTaxAmount, expenses])
 
     return (<Box style={{ display: 'flex', justifyContent: 'center' }}>
         <Box style={{ maxWidth: '400px' }}>

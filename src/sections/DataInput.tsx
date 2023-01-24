@@ -9,25 +9,29 @@ import ExpandMoreTwoTone from "@mui/icons-material/ExpandMoreTwoTone";
 import CloseTwoTone from "@mui/icons-material/CloseTwoTone";
 import { Add, CheckBox, CheckCircle, EditSharp, MinorCrashOutlined, Remove } from "@mui/icons-material";
 import { useStateWIthStorage, StorageConstants } from "../misc/Storage";
-import { getTotalDeductablePercent, OBJECTS } from "../misc/Constants";
+import { DeductableTemplate, ExpensesTemplate, getTotalDeductablePercent, getTotalExpenses, OBJECTS } from "../misc/Constants";
 
-const tempInputStyle = {width:'50px'}
+const tempInputStyle = { width: '50px' }
 
 interface DataInputProps {
   annualSalary: number
   setAnnualSalary: any
-  postTaxDeductables: any[]
-  preTaxeDeductables: any[]
+  postTaxDeductables: DeductableTemplate[]
+  preTaxeDeductables: DeductableTemplate[]
   setPreTaxDeductables: any
   setPostTaxDeductables: any
+  expenses: ExpensesTemplate[]
+  setExpenses: any
+
 }
 
 
 
-function DataInput({ annualSalary, setAnnualSalary, postTaxDeductables, preTaxeDeductables, setPreTaxDeductables, setPostTaxDeductables }: DataInputProps) {
+function DataInput({ annualSalary, setAnnualSalary, postTaxDeductables, preTaxeDeductables, setPreTaxDeductables, setPostTaxDeductables, expenses, setExpenses }: DataInputProps) {
 
   const totalPostTaxDeductablesPercent = getTotalDeductablePercent(postTaxDeductables)
   const totalPreTaxDeductablesPercent = getTotalDeductablePercent(preTaxeDeductables)
+  const totalExpenses = getTotalExpenses(expenses)
   return (<CardLayout header="Inputs" sub="" avatar="S"
     action={
       <>
@@ -43,6 +47,7 @@ function DataInput({ annualSalary, setAnnualSalary, postTaxDeductables, preTaxeD
     <BaseSalary annualSalary={annualSalary} setAnnualSalary={setAnnualSalary} />
     <Deductables deductables={preTaxeDeductables} setDeductables={setPreTaxDeductables} totalDeductablesPercent={totalPreTaxDeductablesPercent} />
     <Deductables postTax deductables={postTaxDeductables} setDeductables={setPostTaxDeductables} totalDeductablesPercent={totalPostTaxDeductablesPercent} />
+    <Expenses expenses={expenses} setExpenses={setExpenses} totalExpenses={totalExpenses} />
 
   </CardLayout>)
 
@@ -58,7 +63,7 @@ function RowContainer({ children, title, defaultExpanded }: any) {
       }}
       style={{ padding: 0, margin: 0 }}
       expandIcon={<ExpandMoreTwoTone />}
-      
+
     >
       <Typography>{title}</Typography>
     </AccordionSummary>
@@ -160,7 +165,7 @@ function Deductables({ deductables, setDeductables, totalDeductablesPercent, pos
 
                         _deductables[index][e.target.name] = e.target.value
                         setDeductables(_deductables)
-                      }} /> : <Typography title={each.href} style={{ maxWidth: '200px' }} variant="body2" color="text.secondary" >
+                      }} /> : <Typography title={each.name} style={{ maxWidth: '200px' }} variant="body2" color="text.secondary" >
                         {each.value}
                       </Typography>}
                     </TableCell>
@@ -170,7 +175,7 @@ function Deductables({ deductables, setDeductables, totalDeductablesPercent, pos
 
                         _deductables[index][e.target.name] = e.target.value
                         setDeductables(_deductables)
-                      }} /> : <Typography title={each.href} style={{ maxWidth: '200px' }} variant="body2" color="text.secondary" >
+                      }} /> : <Typography title={each.name} style={{ maxWidth: '200px' }} variant="body2" color="text.secondary" >
                         {each.match}
                       </Typography>}
                     </TableCell>
@@ -214,7 +219,7 @@ function Deductables({ deductables, setDeductables, totalDeductablesPercent, pos
                         </IconButton>
                       </> : <>
 
-                        {((index == deductables.length -1) && deductables.length >1) && <IconButton
+                        {((index == deductables.length - 1) && deductables.length > 1) && <IconButton
 
                           color="inherit"
                           size="small"
@@ -242,6 +247,192 @@ function Deductables({ deductables, setDeductables, totalDeductablesPercent, pos
 
                             _deductables[index].editing = true
                             setDeductables(_deductables)
+                          }}
+                        >
+
+                          <EditSharp fontSize="inherit" />
+                        </IconButton> </>}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+
+
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </RowContainer>
+
+
+
+
+  )
+}
+
+function Expenses({ expenses, setExpenses, totalExpenses }: { expenses: any[], setExpenses: any, totalExpenses: number }) {
+  const useStyles = makeStyles({
+    customTableContainer: {
+      overflowX: "initial"
+    }
+  })
+  const classes = useStyles();
+
+
+  const tableStyle = { paddingTop: "2px", paddingBottom: 0 };
+  return (
+
+    <RowContainer title="Expenses">
+      <Box style={{ width: '100%', overflowX: 'auto' }}>
+        <TableContainer classes={{ root: classes.customTableContainer }}>
+          <Table stickyHeader>
+            <TableHead >
+              <TableRow>
+                <TableCell style={{ ...tableStyle }}>Name</TableCell>
+                <TableCell style={{ ...tableStyle }}>Amount</TableCell>
+                <TableCell style={{ ...tableStyle }}>Type</TableCell>
+                <TableCell style={{ ...tableStyle, textAlign: 'right' }}>
+
+
+                  <IconButton
+
+                    color="inherit"
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault()
+                      const __ = [...expenses]
+                      __.push({ ...OBJECTS.expensesTemplate })
+                      setExpenses(__)
+                    }}
+                  >
+                    <Add fontSize="inherit" />
+
+                  </IconButton>
+                </TableCell>
+
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {expenses.map((each: ExpensesTemplate, index: number) => {
+                return (
+                  <TableRow
+                    hover
+                    key={index}>
+
+                    <TableCell style={tableStyle}>
+                      {each.editing ? <input style={tempInputStyle} defaultValue={each._name} name="_name" onBlur={(e) => {
+                        const __ = [...expenses]
+
+                        __[index][e.target.name] = e.target.value
+                        setExpenses(__)
+                      }} /> : <Typography
+                        variant="body1"
+                        fontWeight="bold"
+                        color="text.primary"
+                        gutterBottom
+                        noWrap
+                      >
+                        {each.name}
+                      </Typography>}
+
+                    </TableCell>
+                    <TableCell style={tableStyle}>
+                      {each.editing ? <input style={tempInputStyle} type="number" defaultValue={each._value} name="_value" onBlur={(e) => {
+                        const __ = [...expenses]
+
+                        __[index][e.target.name] = e.target.value
+                        setExpenses(__)
+                      }} /> : <Typography title={each.name} style={{ maxWidth: '200px' }} variant="body2" color="text.secondary" >
+                        {each.value}
+                      </Typography>}
+                    </TableCell>
+                    <TableCell style={tableStyle}>
+                      {each.editing ? <select style={tempInputStyle} defaultValue={each._isMonthly + ""} name="_isMonthly" onChange={(e) => {
+                        const __ = [...expenses]
+                        const isMonthly = e.target.value == "true"
+                        __[index]._isMonthly = (isMonthly)
+                   
+                          setExpenses(__)
+                      }}>
+                        <option value={"true"}>Monthly</option>
+                        <option value={"false"}>Annual</option>
+
+                      </select> : <Typography title={each.name} style={{ maxWidth: '200px' }} variant="body2" color="text.secondary" >
+                        {each.isMonthly ? "Monthly" : "Annual"}
+                      </Typography>}
+                    </TableCell>
+                    <TableCell style={{ ...tableStyle, textAlign: 'right' }}>
+                      {each.editing ? <>
+                        <IconButton
+
+                          color="inherit"
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault()
+                            const __ = [...expenses]
+
+                            __[index].editing = false
+                            setExpenses(__)
+                          }}
+                        >
+                          <CloseTwoTone fontSize="inherit" />
+
+                        </IconButton>
+
+                        <IconButton
+
+                          color="inherit"
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault()
+                            const __ = [...expenses]
+
+                            __[index].editing = false
+                            __[index].name = __[index]._name
+                            __[index].value = __[index]._value
+                            __[index].isMonthly = __[index]._isMonthly
+
+                            __[index].annualTotal = __[index].isMonthly ? parseFloat(__[index].value) *12 : parseFloat(__[index].value);
+                     
+                            setExpenses(__)
+                          }}
+                        >
+                          <CheckCircle fontSize="inherit" />
+
+                        </IconButton>
+                      </> : <>
+
+                        {((index == expenses.length - 1) && expenses.length > 1) && <IconButton
+
+                          color="inherit"
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault()
+                            const __ = [...expenses]
+
+                            __.pop();
+                            setExpenses(__)
+                          }}
+                        >
+
+                          <Remove fontSize="inherit" />
+                        </IconButton>}
+
+                        <IconButton
+
+                          color="inherit"
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault()
+                            const __ = [...expenses]
+
+                            __[index].editing = true
+                            setExpenses(__)
                           }}
                         >
 
