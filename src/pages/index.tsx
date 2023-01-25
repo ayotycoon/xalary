@@ -16,7 +16,7 @@ import SavingsView from "../sections/RemainderView";
 
 
 const IndexPage: React.FC<PageProps> = () => {
-  const [annualSalary, setAnnualSalary] = useStateWIthStorage(StorageConstants.AnnualSalary, 0)
+  const [annualSalary, setAnnualSalary] = useStateWIthStorage(StorageConstants.AnnualSalary, 10000)
   const [federalTaxAmount, setFederalTaxAmount] = useState(0)
   const [stateTaxAmount, setStateTaxAmount] = useState(0)
   const [state, setState] = useStateWIthStorage(StorageConstants.State, "")

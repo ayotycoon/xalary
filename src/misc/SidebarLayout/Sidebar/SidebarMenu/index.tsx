@@ -7,8 +7,8 @@ import { useLocation } from '@reach/router';
 import { Link } from 'gatsby';
 import { StateContext } from '../../../../contexts/StateContext';
 import { Box } from '@mui/system';
-import { Share, Upload } from '@mui/icons-material';
-import { getDataAsString, processFromUrl } from '../../../Storage';
+import { DarkMode, Share, Upload, WbSunnyTwoTone } from '@mui/icons-material';
+import { getDataAsString, isBrowser, processFromUrl } from '../../../Storage';
 import StorageView from '../../../StorageView';
 
 const MenuWrapper = styled(List)(
@@ -198,10 +198,25 @@ function SidebarMenu() {
   const sectionItems = menuItems.filter(section => !section.hide);
   const [shareUrl, setShareableString] = useState("");
 
-
+  const isLight = ((isBrowser() ? localStorage.getItem('appTheme') : "") || "PureLightTheme") == "PureLightTheme"
   return (
 
     <>
+      <div style={{ textAlign: 'center' }}>
+        <Tooltip arrow title="Change Theme">
+          <IconButton color="primary" onClick={() => {
+
+            if (isLight) {
+              localStorage.setItem('appTheme', "PureDarkTheme")
+            } else {
+              localStorage.setItem('appTheme', "PureLightTheme")
+            }
+            window.location.reload()
+          }}>
+            {isLight ? <WbSunnyTwoTone /> : <DarkMode />}
+          </IconButton>
+        </Tooltip>
+      </div>
 
       {sectionItems.map((section) => (
         <div key={section.heading}>
@@ -229,28 +244,28 @@ function SidebarMenu() {
             />
             <br />
             <Box>
-            <Tooltip arrow title="Share data">
-              <IconButton color="primary" onClick={() => {
+              <Tooltip arrow title="Share data">
+                <IconButton color="primary" onClick={() => {
 
-                const str = getDataAsString()
+                  const str = getDataAsString()
 
-                setShareableString(str)
+                  setShareableString(str)
 
-              }}>
-                <Share />
-              </IconButton>
-            </Tooltip>
-            <Tooltip arrow title="Load data">
-              <IconButton color="primary" onClick={() => {
+                }}>
+                  <Share />
+                </IconButton>
+              </Tooltip>
+              <Tooltip arrow title="Load data">
+                <IconButton color="primary" onClick={() => {
 
-                processFromUrl(shareUrl)
+                  processFromUrl(shareUrl)
 
 
 
-              }}>
-                <Upload />
-              </IconButton>
-            </Tooltip>
+                }}>
+                  <Upload />
+                </IconButton>
+              </Tooltip>
 
             </Box>
           </Box>
