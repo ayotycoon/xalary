@@ -32,7 +32,7 @@ function DataInput({ annualSalary, setAnnualSalary, postTaxDeductables, preTaxeD
   const totalPostTaxDeductablesPercent = getTotalDeductablePercent(postTaxDeductables)
   const totalPreTaxDeductablesPercent = getTotalDeductablePercent(preTaxeDeductables)
   const totalExpenses = getTotalExpenses(expenses)
-  return (<CardLayout header="Inputs" sub="" avatar="S"
+  return (<CardLayout header="Input your data" sub="" avatar="S"
     action={
       <>
         {/* <IconButton onClick={()=> alert("")} color="primary">

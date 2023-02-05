@@ -12,6 +12,7 @@ import { DeductableTemplate, ExpensesTemplate, OBJECTS } from "../misc/Constants
 import DeductablesView from "../sections/DeductablesView";
 import AnalysisChart from "../sections/AnalysisChart";
 import SavingsView from "../sections/RemainderView";
+import ConfigView from "../sections/ConfigView";
 
 
 
@@ -24,9 +25,9 @@ const IndexPage: React.FC<PageProps> = () => {
   const [postTaxDeductables, setPostTaxDeductables] = useStateWIthStorage(StorageConstants.PostTaxDeductables, [{ ...OBJECTS.deductableTemplate }] as DeductableTemplate[])
   const [preTaxeDeductables, setPreTaxDeductables] = useStateWIthStorage(StorageConstants.PreTaxDeductables, [{ ...OBJECTS.deductableTemplate }] as DeductableTemplate[])
 
-
   return (
     <Layout>
+      <ConfigView />
       <Grid
         container
         direction="row"

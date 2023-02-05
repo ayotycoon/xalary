@@ -26,6 +26,7 @@ export const StorageConstants = {
     PostTaxDeductables: "after-tax-deductables",
     PreTaxDeductables: "before-tax-deductables",
     Expenses: "expenses",
+    FederalTaxRatesConfig: "federal-tax-rates-config"
 }
 
 export const getDataAsString = () => {
